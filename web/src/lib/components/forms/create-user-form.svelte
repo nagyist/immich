@@ -1,13 +1,17 @@
 <script lang="ts">
   import { serverInfo } from '$lib/stores/server-info.store';
-  import { convertToBytes } from '$lib/utils/byte-converter';
   import { handleError } from '$lib/utils/handle-error';
-  import { createUser } from '@immich/sdk';
+  import { createUserAdmin } from '@immich/sdk';
   import { createEventDispatcher } from 'svelte';
   import Button from '../elements/buttons/button.svelte';
-  import ImmichLogo from '../shared-components/immich-logo.svelte';
   import PasswordField from '../shared-components/password-field.svelte';
   import Slider from '../elements/slider.svelte';
+  import FullScreenModal from '$lib/components/shared-components/full-screen-modal.svelte';
+  import { featureFlags } from '$lib/stores/server-config.store';
+  import { t } from 'svelte-i18n';
+  import { ByteUnit, convertToBytes } from '$lib/utils/byte-units';
+
+  export let onClose: () => void;
 
   let error: string;
   let success: string;
@@ -17,17 +21,18 @@
   let confirmPassword = '';
   let name = '';
   let shouldChangePassword = true;
+  let notify = true;
 
   let canCreateUser = false;
   let quotaSize: number | undefined;
   let isCreatingUser = false;
 
-  $: quotaSizeInBytes = quotaSize ? convertToBytes(quotaSize, 'GiB') : null;
+  $: quotaSizeInBytes = quotaSize ? convertToBytes(quotaSize, ByteUnit.GiB) : null;
   $: quotaSizeWarning = quotaSizeInBytes && quotaSizeInBytes > $serverInfo.diskSizeRaw;
 
   $: {
     if (password !== confirmPassword && confirmPassword.length > 0) {
-      error = 'Password does not match';
+      error = $t('password_does_not_match');
       canCreateUser = false;
     } else {
       error = '';
@@ -45,23 +50,24 @@
       error = '';
 
       try {
-        await createUser({
-          createUserDto: {
+        await createUserAdmin({
+          userAdminCreateDto: {
             email,
             password,
             shouldChangePassword,
             name,
             quotaSizeInBytes,
+            notify,
           },
         });
 
-        success = 'New user created';
+        success = $t('new_user_created');
 
         dispatch('submit');
 
         return;
       } catch (error) {
-        handleError(error, 'Unable to create user');
+        handleError(error, $t('errors.unable_to_create_user'));
       } finally {
         isCreatingUser = false;
       }
@@ -69,62 +75,64 @@
   }
 </script>
 
-<div
-  class="max-h-screen w-[500px] max-w-[95vw] overflow-y-auto immich-scrollbar rounded-3xl border bg-immich-bg p-4 py-8 shadow-sm dark:border-immich-dark-gray dark:bg-immich-dark-gray dark:text-immich-dark-fg"
->
-  <div class="flex flex-col place-content-center place-items-center gap-4 px-4">
-    <ImmichLogo noText class="text-center" height="75" width="75" />
-    <h1 class="text-2xl font-medium text-immich-primary dark:text-immich-dark-primary">Create new user</h1>
-  </div>
-
-  <form on:submit|preventDefault={registerUser} autocomplete="off">
-    <div class="m-4 flex flex-col gap-2">
-      <label class="immich-form-label" for="email">Email</label>
+<FullScreenModal title={$t('create_new_user')} showLogo {onClose}>
+  <form on:submit|preventDefault={registerUser} autocomplete="off" id="create-new-user-form">
+    <div class="my-4 flex flex-col gap-2">
+      <label class="immich-form-label" for="email">{$t('email')}</label>
       <input class="immich-form-input" id="email" bind:value={email} type="email" required />
     </div>
 
-    <div class="m-4 flex flex-col gap-2">
-      <label class="immich-form-label" for="password">Password</label>
+    {#if $featureFlags.email}
+      <div class="my-4 flex place-items-center justify-between gap-2">
+        <label class="text-sm dark:text-immich-dark-fg" for="send-welcome-email">
+          {$t('admin.send_welcome_email')}
+        </label>
+        <Slider id="send-welcome-email" bind:checked={notify} />
+      </div>
+    {/if}
+
+    <div class="my-4 flex flex-col gap-2">
+      <label class="immich-form-label" for="password">{$t('password')}</label>
       <PasswordField id="password" bind:password autocomplete="new-password" />
     </div>
 
-    <div class="m-4 flex flex-col gap-2">
-      <label class="immich-form-label" for="confirmPassword">Confirm Password</label>
+    <div class="my-4 flex flex-col gap-2">
+      <label class="immich-form-label" for="confirmPassword">{$t('confirm_password')}</label>
       <PasswordField id="confirmPassword" bind:password={confirmPassword} autocomplete="new-password" />
     </div>
 
-    <div class="m-4 flex place-items-center justify-between gap-2">
+    <div class="my-4 flex place-items-center justify-between gap-2">
       <label class="text-sm dark:text-immich-dark-fg" for="require-password-change">
-        Require user to change password on first login
+        {$t('admin.require_password_change_on_login')}
       </label>
       <Slider id="require-password-change" bind:checked={shouldChangePassword} />
     </div>
 
-    <div class="m-4 flex flex-col gap-2">
-      <label class="immich-form-label" for="name">Name</label>
+    <div class="my-4 flex flex-col gap-2">
+      <label class="immich-form-label" for="name">{$t('name')}</label>
       <input class="immich-form-input" id="name" bind:value={name} type="text" required />
     </div>
 
-    <div class="m-4 flex flex-col gap-2">
+    <div class="my-4 flex flex-col gap-2">
       <label class="flex items-center gap-2 immich-form-label" for="quotaSize">
-        Quota Size (GiB)
+        {$t('admin.quota_size_gib')}
         {#if quotaSizeWarning}
-          <p class="text-red-400 text-sm">You set a quota higher than the disk size</p>
+          <p class="text-red-400 text-sm">{$t('errors.quota_higher_than_disk_size')}</p>
         {/if}
       </label>
       <input class="immich-form-input" id="quotaSize" type="number" min="0" bind:value={quotaSize} />
     </div>
 
     {#if error}
-      <p class="ml-4 text-sm text-red-400">{error}</p>
+      <p class="text-sm text-red-400">{error}</p>
     {/if}
 
     {#if success}
-      <p class="ml-4 text-sm text-immich-primary">{success}</p>
+      <p class="text-sm text-immich-primary">{success}</p>
     {/if}
-    <div class="flex w-full gap-4 p-4">
-      <Button color="gray" fullwidth on:click={() => dispatch('cancel')}>Cancel</Button>
-      <Button type="submit" disabled={isCreatingUser} fullwidth>Create</Button>
-    </div>
   </form>
-</div>
+  <svelte:fragment slot="sticky-bottom">
+    <Button color="gray" fullwidth on:click={() => dispatch('cancel')}>{$t('cancel')}</Button>
+    <Button type="submit" disabled={isCreatingUser} fullwidth form="create-new-user-form">{$t('create')}</Button>
+  </svelte:fragment>
+</FullScreenModal>
