@@ -177,6 +177,7 @@ Class | Method | HTTP request | Description
 *SearchApi* | [**getAssetsByCity**](doc//SearchApi.md#getassetsbycity) | **GET** /search/cities | 
 *SearchApi* | [**getExploreData**](doc//SearchApi.md#getexploredata) | **GET** /search/explore | 
 *SearchApi* | [**getSearchSuggestions**](doc//SearchApi.md#getsearchsuggestions) | **GET** /search/suggestions | 
+*SearchApi* | [**searchAssetStatistics**](doc//SearchApi.md#searchassetstatistics) | **POST** /search/statistics | 
 *SearchApi* | [**searchAssets**](doc//SearchApi.md#searchassets) | **POST** /search/metadata | 
 *SearchApi* | [**searchPerson**](doc//SearchApi.md#searchperson) | **GET** /search/person | 
 *SearchApi* | [**searchPlaces**](doc//SearchApi.md#searchplaces) | **GET** /search/places | 
@@ -184,7 +185,7 @@ Class | Method | HTTP request | Description
 *SearchApi* | [**searchSmart**](doc//SearchApi.md#searchsmart) | **POST** /search/smart | 
 *ServerApi* | [**deleteServerLicense**](doc//ServerApi.md#deleteserverlicense) | **DELETE** /server/license | 
 *ServerApi* | [**getAboutInfo**](doc//ServerApi.md#getaboutinfo) | **GET** /server/about | 
-*ServerApi* | [**getAndroidLinks**](doc//ServerApi.md#getandroidlinks) | **GET** /server/android-links | 
+*ServerApi* | [**getApkLinks**](doc//ServerApi.md#getapklinks) | **GET** /server/apk-links | 
 *ServerApi* | [**getServerConfig**](doc//ServerApi.md#getserverconfig) | **GET** /server/config | 
 *ServerApi* | [**getServerFeatures**](doc//ServerApi.md#getserverfeatures) | **GET** /server/features | 
 *ServerApi* | [**getServerLicense**](doc//ServerApi.md#getserverlicense) | **GET** /server/license | 
@@ -247,13 +248,16 @@ Class | Method | HTTP request | Description
 *UsersApi* | [**createProfileImage**](doc//UsersApi.md#createprofileimage) | **POST** /users/profile-image | 
 *UsersApi* | [**deleteProfileImage**](doc//UsersApi.md#deleteprofileimage) | **DELETE** /users/profile-image | 
 *UsersApi* | [**deleteUserLicense**](doc//UsersApi.md#deleteuserlicense) | **DELETE** /users/me/license | 
+*UsersApi* | [**deleteUserOnboarding**](doc//UsersApi.md#deleteuseronboarding) | **DELETE** /users/me/onboarding | 
 *UsersApi* | [**getMyPreferences**](doc//UsersApi.md#getmypreferences) | **GET** /users/me/preferences | 
 *UsersApi* | [**getMyUser**](doc//UsersApi.md#getmyuser) | **GET** /users/me | 
 *UsersApi* | [**getProfileImage**](doc//UsersApi.md#getprofileimage) | **GET** /users/{id}/profile-image | 
 *UsersApi* | [**getUser**](doc//UsersApi.md#getuser) | **GET** /users/{id} | 
 *UsersApi* | [**getUserLicense**](doc//UsersApi.md#getuserlicense) | **GET** /users/me/license | 
+*UsersApi* | [**getUserOnboarding**](doc//UsersApi.md#getuseronboarding) | **GET** /users/me/onboarding | 
 *UsersApi* | [**searchUsers**](doc//UsersApi.md#searchusers) | **GET** /users | 
 *UsersApi* | [**setUserLicense**](doc//UsersApi.md#setuserlicense) | **PUT** /users/me/license | 
+*UsersApi* | [**setUserOnboarding**](doc//UsersApi.md#setuseronboarding) | **PUT** /users/me/onboarding | 
 *UsersApi* | [**updateMyPreferences**](doc//UsersApi.md#updatemypreferences) | **PUT** /users/me/preferences | 
 *UsersApi* | [**updateMyUser**](doc//UsersApi.md#updatemyuser) | **PUT** /users/me | 
 *UsersAdminApi* | [**createUserAdmin**](doc//UsersAdminApi.md#createuseradmin) | **POST** /admin/users | 
@@ -286,6 +290,8 @@ Class | Method | HTTP request | Description
  - [AlbumUserCreateDto](doc//AlbumUserCreateDto.md)
  - [AlbumUserResponseDto](doc//AlbumUserResponseDto.md)
  - [AlbumUserRole](doc//AlbumUserRole.md)
+ - [AlbumsResponse](doc//AlbumsResponse.md)
+ - [AlbumsUpdate](doc//AlbumsUpdate.md)
  - [AllJobStatusResponseDto](doc//AllJobStatusResponseDto.md)
  - [AssetBulkDeleteDto](doc//AssetBulkDeleteDto.md)
  - [AssetBulkUpdateDto](doc//AssetBulkUpdateDto.md)
@@ -385,6 +391,8 @@ Class | Method | HTTP request | Description
  - [OAuthConfigDto](doc//OAuthConfigDto.md)
  - [OAuthTokenEndpointAuthMethod](doc//OAuthTokenEndpointAuthMethod.md)
  - [OnThisDayDto](doc//OnThisDayDto.md)
+ - [OnboardingDto](doc//OnboardingDto.md)
+ - [OnboardingResponseDto](doc//OnboardingResponseDto.md)
  - [PartnerDirection](doc//PartnerDirection.md)
  - [PartnerResponseDto](doc//PartnerResponseDto.md)
  - [PeopleResponse](doc//PeopleResponse.md)
@@ -418,6 +426,7 @@ Class | Method | HTTP request | Description
  - [SearchFacetCountResponseDto](doc//SearchFacetCountResponseDto.md)
  - [SearchFacetResponseDto](doc//SearchFacetResponseDto.md)
  - [SearchResponseDto](doc//SearchResponseDto.md)
+ - [SearchStatisticsResponseDto](doc//SearchStatisticsResponseDto.md)
  - [SearchSuggestionType](doc//SearchSuggestionType.md)
  - [ServerAboutResponseDto](doc//ServerAboutResponseDto.md)
  - [ServerApkLinksDto](doc//ServerApkLinksDto.md)
@@ -446,6 +455,7 @@ Class | Method | HTTP request | Description
  - [StackCreateDto](doc//StackCreateDto.md)
  - [StackResponseDto](doc//StackResponseDto.md)
  - [StackUpdateDto](doc//StackUpdateDto.md)
+ - [StatisticsSearchDto](doc//StatisticsSearchDto.md)
  - [SyncAckDeleteDto](doc//SyncAckDeleteDto.md)
  - [SyncAckDto](doc//SyncAckDto.md)
  - [SyncAckSetDto](doc//SyncAckSetDto.md)
